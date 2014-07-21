@@ -22,7 +22,7 @@ Find JavaScript files in this project:
     # => "/home/ixti/Projects/hike-js/lib/hike/trail.js"
 
     trail.find("test_trail");
-    # => "/home/ixti/Projects/hike-js/test/test_trail.rb"
+    # => "/home/ixti/Projects/hike-js/test/test_trail.js"
 
 Explore your shell path:
 
