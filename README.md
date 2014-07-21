@@ -14,26 +14,30 @@ Examples
 
 Find JavaScript files in this project:
 
-    trail = new hike.Trail("/home/ixti/Projects/hike-js");
-    trail.extensions.append(".js");
-    trail.paths.append("lib", "test");
+```js
+trail = new hike.Trail("/home/ixti/Projects/hike-js");
+trail.extensions.append(".js");
+trail.paths.append("lib", "test");
 
-    trail.find("hike/trail");
-    # => "/home/ixti/Projects/hike-js/lib/hike/trail.js"
+trail.find("hike/trail");
+// => "/home/ixti/Projects/hike-js/lib/hike/trail.js"
 
-    trail.find("test_trail");
-    # => "/home/ixti/Projects/hike-js/test/test_trail.js"
+trail.find("test_trail");
+// => "/home/ixti/Projects/hike-js/test/test_trail.js"
+```
 
 Explore your shell path:
 
-    trail = new hike.Trail("/");
-    trail.paths.append(process.env.PATH.split(":"));
+```js
+trail = new hike.Trail("/");
+trail.paths.append(process.env.PATH.split(":"));
 
-    trail.find("ls");
-    # => "/bin/ls"
+trail.find("ls");
+// => "/bin/ls"
 
-    trail.find("gem");
-    # => "/home/ixti/.rvm/rubies/ruby-1.9.2-p290/bin/gem"
+trail.find("gem");
+// => "/home/ixti/.rvm/rubies/ruby-1.9.2-p290/bin/gem"
+```
 
 
 Installation
