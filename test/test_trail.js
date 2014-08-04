@@ -28,10 +28,10 @@ describe('Trail', function () {
     trail = new Trail(FIXTURE_ROOT);
     trail.append_paths('app/views', 'vendor/plugins/signal_id/app/views', '.');
     trail.append_extensions('builder', 'coffee', 'str', '.erb');
-    trail.alias_extension('html', 'htm');
-    trail.alias_extension('html', 'xhtml');
-    trail.alias_extension('html', 'php');
-    trail.alias_extension('js', 'coffee');
+    trail.alias_extension('htm', 'html');
+    trail.alias_extension('xhtml', 'html');
+    trail.alias_extension('php', 'html');
+    trail.alias_extension('coffee', 'js');
   });
 
   it('test trail root', function () {
