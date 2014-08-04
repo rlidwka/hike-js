@@ -17,7 +17,7 @@ fs.existsSync = fs.existsSync || path.existsSync;
 // internal
 var Trail = require('../').Trail;
 var FIXTURE_ROOT = path.join(__dirname, 'fixtures');
-function fixturePath (apath) {
+function fixture_path (apath) {
   return path.join(FIXTURE_ROOT, apath);
 }
 
@@ -39,9 +39,9 @@ describe('Trail', function () {
   });
 
   it('test trail paths', function () {
-    assert.deepEqual([fixturePath('app/views'),
-      fixturePath('vendor/plugins/signal_id/app/views'),
-      fixturePath('.')], trail.paths.slice(0));
+    assert.deepEqual([fixture_path('app/views'),
+      fixture_path('vendor/plugins/signal_id/app/views'),
+      fixture_path('.')], trail.paths.slice(0));
   });
 
   it('test trail extensions', function () {
@@ -68,113 +68,113 @@ describe('Trail', function () {
   });
 
   it('test find without an extension', function () {
-    assert.equal(fixturePath('app/views/projects/index.html.erb'),
+    assert.equal(fixture_path('app/views/projects/index.html.erb'),
       trail.find('projects/index.html'));
   });
 
   it('test find with an extension', function () {
-    assert.equal(fixturePath('app/views/projects/index.html.erb'),
+    assert.equal(fixture_path('app/views/projects/index.html.erb'),
       trail.find('projects/index.html.erb'));
   });
 
   it('test find with leading slash', function () {
-    assert.equal(fixturePath('app/views/projects/index.html.erb'),
+    assert.equal(fixture_path('app/views/projects/index.html.erb'),
       trail.find('/projects/index.html'));
   });
 
   it('test find respects path order', function () {
-    assert.equal(fixturePath('app/views/layouts/interstitial.html.erb'),
+    assert.equal(fixture_path('app/views/layouts/interstitial.html.erb'),
       trail.find('layouts/interstitial.html'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
     trail.prepend_paths('vendor/plugins/signal_id/app/views');
-    assert.equal(fixturePath('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
+    assert.equal(fixture_path('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
       trail.find('layouts/interstitial.html'));
   });
 
   it('test find all respects path order', function () {
     assert.deepEqual([
-      fixture_path("app/views/layouts/interstitial.html.erb"),
-      fixture_path("vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb"),
-    ], trail.find_all("layouts/interstitial.html"));
+      fixture_path('app/views/layouts/interstitial.html.erb'),
+      fixture_path('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
+    ], trail.find_all('layouts/interstitial.html'));
   });
 
   it('test find all with multiple extensions respects extension order', function () {
     assert.deepEqual([
-      fixture_path("app/views/application.js.coffee.str"),
-      fixture_path("app/views/application.js.coffee.erb"),
-    ], trail.find_all("application.js"));
+      fixture_path('app/views/application.js.coffee.str'),
+      fixture_path('app/views/application.js.coffee.erb'),
+    ], trail.find_all('application.js'));
   });
 
   it('test find respects extension order', function () {
-    assert.equal( fixturePath('app/views/recordings/index.atom.builder'),
+    assert.equal( fixture_path('app/views/recordings/index.atom.builder'),
       trail.find('recordings/index.atom'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
     trail.prepend_extensions('erb');
-    assert.equal(fixturePath('app/views/recordings/index.atom.erb'),
+    assert.equal(fixture_path('app/views/recordings/index.atom.erb'),
       trail.find('recordings/index.atom'));
   });
 
   it('test find with multiple logical paths returns first match', function () {
-    assert.equal(fixturePath('app/views/recordings/index.html.erb'),
+    assert.equal(fixture_path('app/views/recordings/index.html.erb'),
       trail.find(['recordings/index.txt', 'recordings/index.html', 'recordings/index.atom']));
   // no recordings/index.txt.*
   });
 
   it('test find file in path root returns expanded path', function () {
-    assert.equal(fixturePath('app/views/index.html.erb'),
+    assert.equal(fixture_path('app/views/index.html.erb'),
       trail.find('index.html'));
   });
 
   it('test find extensionless file', function () {
-    assert.equal(fixturePath('README'), trail.find('README'));
+    assert.equal(fixture_path('README'), trail.find('README'));
   });
 
   it('test find file with multiple extensions', function () {
     assert.equal(
-      fixturePath('app/views/projects/project.js.coffee.erb'),
+      fixture_path('app/views/projects/project.js.coffee.erb'),
       trail.find('projects/project.js'));
   });
 
   it('test find file with multiple extensions respects extension order', function () {
     assert.equal(
-      fixturePath('app/views/application.js.coffee.str'),
+      fixture_path('app/views/application.js.coffee.str'),
       trail.find('application.js'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
     trail.prepend_extension('erb');
-    assert.equal(fixturePath('app/views/application.js.coffee.erb'),
+    assert.equal(fixture_path('app/views/application.js.coffee.erb'),
       trail.find('application.js'));
   });
 
   it('test find file by aliased extension', function () {
     assert.equal(
-      fixturePath('app/views/people.coffee'),
+      fixture_path('app/views/people.coffee'),
       trail.find('people.coffee'));
     assert.equal(
-      fixturePath('app/views/people.coffee'),
+      fixture_path('app/views/people.coffee'),
       trail.find('people.js'));
     assert.equal(
-      fixturePath('app/views/people.htm'),
+      fixture_path('app/views/people.htm'),
       trail.find('people.htm'));
     assert.equal(
-      fixturePath('app/views/people.htm'),
+      fixture_path('app/views/people.htm'),
       trail.find('people.html'));
   });
 
   it('test find file with aliases prefers primary extension', function () {
-    assert.equal(fixturePath('app/views/index.html.erb'),
+    assert.equal(fixture_path('app/views/index.html.erb'),
       trail.find('index.html'));
-    assert.equal(fixturePath('app/views/index.php'),
+    assert.equal(fixture_path('app/views/index.php'),
       trail.find('index.php'));
   });
 
   it('test find with base path option and relative logical path', function () {
-    assert.equal(fixturePath('app/views/projects/index.html.erb'),
-      trail.find('./index.html', {'basePath': fixturePath('app/views/projects')}));
+    assert.equal(fixture_path('app/views/projects/index.html.erb'),
+      trail.find('./index.html', {'basePath': fixture_path('app/views/projects')}));
   });
 
   it('test find ignores base path option when logical path is not relative', function () {
-    assert.equal(fixturePath('app/views/index.html.erb'),
-      trail.find('index.html', {'basePath': fixturePath('app/views/projects')}));
+    assert.equal(fixture_path('app/views/index.html.erb'),
+      trail.find('index.html', {'basePath': fixture_path('app/views/projects')}));
   });
 
   it('test base path option must be expanded', function () {
@@ -196,8 +196,8 @@ describe('Trail', function () {
       results.push(apath);
     });
     assert.deepEqual([
-      fixturePath('app/views/layouts/interstitial.html.erb'),
-      fixturePath('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb')
+      fixture_path('app/views/layouts/interstitial.html.erb'),
+      fixture_path('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb')
     ], results);
   });
 
@@ -207,13 +207,13 @@ describe('Trail', function () {
       results.push(apath);
     });
     assert.deepEqual([
-      fixturePath('app/views/application.js.coffee.str'),
-      fixturePath('app/views/application.js.coffee.erb')
+      fixture_path('app/views/application.js.coffee.str'),
+      fixture_path('app/views/application.js.coffee.erb')
     ], results);
   });
 
   it('test find filename instead directory', function () {
-    assert.equal(fixturePath('app/views/projects.erb'),
+    assert.equal(fixture_path('app/views/projects.erb'),
       trail.find('projects'));
   });
 
@@ -222,7 +222,7 @@ describe('Trail', function () {
   });
 
   it('test entries', function () {
-    var entries = trail.entries(fixturePath('app/views')).sort();
+    var entries = trail.entries(fixture_path('app/views')).sort();
     var expected = [
       'application.js.coffee.erb',
       'application.js.coffee.str',
@@ -239,17 +239,17 @@ describe('Trail', function () {
   });
 
   it('test stat', function () {
-    assert(trail.stat(fixturePath('app/views/index.html.erb')));
-    assert(trail.stat(fixturePath('app/views')));
-    assert.equal(undefined, trail.stat(fixturePath('app/views/missing.html')));
+    assert(trail.stat(fixture_path('app/views/index.html.erb')));
+    assert(trail.stat(fixture_path('app/views')));
+    assert.equal(undefined, trail.stat(fixture_path('app/views/missing.html')));
   });
 
   it('test find reflects changes in the file system', function () {
-    var tempfile = fixturePath('dashboard.html');
+    var tempfile = fixture_path('dashboard.html');
     assert.equal(undefined, trail.find('dashboard.html'));
     try {
       fs.writeFileSync(tempfile, '');
-      assert.equal(fixturePath('dashboard.html'), trail.find('dashboard.html'));
+      assert.equal(fixture_path('dashboard.html'), trail.find('dashboard.html'));
     } finally {
       fs.unlinkSync(tempfile);
       assert(!fs.existsSync(tempfile));
@@ -277,7 +277,7 @@ describe('Cache', function () {
   // pick one at random
   it('test find file with multiple extensions', function () {
     assert.equal(
-      fixturePath('app/views/projects/project.js.coffee.erb'),
+      fixture_path('app/views/projects/project.js.coffee.erb'),
       trail.find('projects/project.js'));
   });
 
@@ -285,11 +285,11 @@ describe('Cache', function () {
     var trail = new Trail(FIXTURE_ROOT);
     trail.append_path('.');
     var index = trail.cached();
-    assert.deepEqual([fixturePath('.')], trail.paths.slice());
-    assert.deepEqual([fixturePath('.')], index.paths.slice());
+    assert.deepEqual([fixture_path('.')], trail.paths.slice());
+    assert.deepEqual([fixture_path('.')], index.paths.slice());
     trail.append_paths('app/views');
-    assert.deepEqual([fixturePath('.'), fixturePath('app/views')], trail.paths.slice());
-    assert.deepEqual([fixturePath('.')], index.paths.slice());
+    assert.deepEqual([fixture_path('.'), fixture_path('app/views')], trail.paths.slice());
+    assert.deepEqual([fixture_path('.')], index.paths.slice());
   });
 
 
@@ -307,7 +307,7 @@ describe('Cache', function () {
 
   it('test cache find does not reflect changes in the file system', function () {
     // trail here is its index
-    var tempfile = fixturePath('dashboard.html');
+    var tempfile = fixture_path('dashboard.html');
     assert(!fs.existsSync(tempfile));
     assert.equal(undefined, trail.find('dashboard.html'));
     try {
