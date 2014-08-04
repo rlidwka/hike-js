@@ -16,8 +16,8 @@ Find JavaScript files in this project:
 
 ```js
 trail = new hike.Trail("/home/ixti/Projects/hike-js");
-trail.extensions.append(".js");
-trail.paths.append("lib", "test");
+trail.append_extension(".js");
+trail.append_paths("lib", "test");
 
 trail.find("hike/trail");
 // => "/home/ixti/Projects/hike-js/lib/hike/trail.js"
@@ -30,7 +30,7 @@ Explore your shell path:
 
 ```js
 trail = new hike.Trail("/");
-trail.paths.append(process.env.PATH.split(":"));
+trail.append_paths(process.env.PATH.split(":"));
 
 trail.find("ls");
 // => "/bin/ls"
@@ -43,8 +43,9 @@ trail.find("gem");
 Installation
 ------------
 
-    $ npm install hike
-
+```sh
+$ npm install hike
+```
 
 License
 -------
