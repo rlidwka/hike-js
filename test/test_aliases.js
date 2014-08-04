@@ -27,26 +27,4 @@ describe('Aliases', function () {
     assert.equal('.bar',  aliases.get('foo').toArray().join(','));
     assert.equal('',      aliases.get('moo').toArray().join(','));
   });
-
-
-  it('should throw an error on attempt to modify when frozen', function () {
-    aliases.append('foo', 'bar');
-    aliases.freeze();
-
-    assert.ok(aliases.frozen);
-
-    assert.throws(function () { aliases.remove('foo', 'bar'); });
-    assert.throws(function () { aliases.append('foo', 'baz'); });
-
-    assert.doesNotThrow(function () { aliases.get('foo'); });
-  });
-
-
-  it('should freeze inner Extensions collections when frozen', function () {
-    aliases.append('foo', 'bar');
-    aliases.freeze();
-
-    assert.ok(aliases.get('foo').frozen);
-    assert.ok(aliases.get('moo').frozen);
-  });
 });

@@ -15,7 +15,7 @@ fs.existsSync = fs.existsSync || path.existsSync;
 
 
 // internal
-var Trail = require('../lib/hike/trail');
+var Trail = require('../').Trail;
 var FIXTURE_ROOT = path.join(__dirname, 'fixtures');
 function fixturePath (apath) {
   return path.join(FIXTURE_ROOT, apath);
@@ -26,10 +26,12 @@ describe('Trail', function () {
 
   beforeEach(function () {
     trail = new Trail(FIXTURE_ROOT);
-    trail.paths.append('app/views', 'vendor/plugins/signal_id/app/views', '.');
-    trail.extensions.append('builder', 'coffee', 'str', '.erb');
-    trail.aliases.append('html', 'htm', 'xhtml', 'php');
-    trail.aliases.append('js', 'coffee');
+    trail.append_paths('app/views', 'vendor/plugins/signal_id/app/views', '.');
+    trail.append_extensions('builder', 'coffee', 'str', '.erb');
+    trail.alias_extension('html', 'htm');
+    trail.alias_extension('html', 'xhtml');
+    trail.alias_extension('html', 'php');
+    trail.alias_extension('js', 'coffee');
   });
 
   it('test trail root', function () {
@@ -39,19 +41,19 @@ describe('Trail', function () {
   it('test trail paths', function () {
     assert.deepEqual([fixturePath('app/views'),
       fixturePath('vendor/plugins/signal_id/app/views'),
-      fixturePath('.')], trail.paths.toArray());
+      fixturePath('.')], trail.paths.slice(0));
   });
 
   it('test trail extensions', function () {
-    assert.deepEqual(['.builder', '.coffee', '.str', '.erb'], trail.extensions.toArray());
+    assert.deepEqual(['.builder', '.coffee', '.str', '.erb'], trail.extensions.slice());
   });
 
   it('test trail index', function () {
     // assert_kind_of Hike::Index, trail.index
     // what's the js equivalent?
-    assert.equal(trail.root, trail.index.root);
-    assert.deepEqual({}, trail.index.__entries__);
-    assert.equal(undefined, trail.__entries__);
+    assert.equal(trail.root, trail.cached().root);
+    assert.deepEqual({}, trail.cached()._entries);
+    assert.equal(undefined, trail._entries);
   });
 
   it('test nonexistent file', function () {
@@ -74,11 +76,11 @@ describe('Trail', function () {
   });
 
   it('test find respects path order', function () {
-    assert.equal( fixturePath('app/views/layouts/interstitial.html.erb'),
+    assert.equal(fixturePath('app/views/layouts/interstitial.html.erb'),
       trail.find('layouts/interstitial.html'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
-    trail.paths.prepend('vendor/plugins/signal_id/app/views');
-    assert.equal( fixturePath('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
+    trail.prepend_paths('vendor/plugins/signal_id/app/views');
+    assert.equal(fixturePath('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
       trail.find('layouts/interstitial.html'));
   });
 
@@ -86,8 +88,8 @@ describe('Trail', function () {
     assert.equal( fixturePath('app/views/recordings/index.atom.builder'),
       trail.find('recordings/index.atom'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
-    trail.extensions.prepend('erb');
-    assert.equal( fixturePath('app/views/recordings/index.atom.erb'),
+    trail.prepend_extensions('erb');
+    assert.equal(fixturePath('app/views/recordings/index.atom.erb'),
       trail.find('recordings/index.atom'));
   });
 
@@ -117,8 +119,8 @@ describe('Trail', function () {
       fixturePath('app/views/application.js.coffee.str'),
       trail.find('application.js'));
     // trail = new_trail { |t| t.paths.replace t.paths.reverse }
-    trail.extensions.prepend('erb');
-    assert.equal( fixturePath('app/views/application.js.coffee.erb'),
+    trail.prepend_extension('erb');
+    assert.equal(fixturePath('app/views/application.js.coffee.erb'),
       trail.find('application.js'));
   });
 
@@ -241,11 +243,13 @@ describe('IntexText', function () {
 
   beforeEach(function () {
     trail = new Trail(FIXTURE_ROOT);
-    trail.paths.append('app/views', 'vendor/plugins/signal_id/app/views', '.');
-    trail.extensions.append('builder', 'coffee', 'str', '.erb');
-    trail.aliases.append('html', 'htm', 'xhtml', 'php');
-    trail.aliases.append('js', 'coffee');
-    trail = trail.index;
+    trail.append_paths('app/views', 'vendor/plugins/signal_id/app/views', '.');
+    trail.append_extensions('builder', 'coffee', 'str', '.erb');
+    trail.alias_extension('html', 'htm');
+    trail.alias_extension('html', 'xhtml');
+    trail.alias_extension('html', 'php');
+    trail.alias_extension('js', 'coffee');
+    trail = trail.cached();
   });
 
   // rb reruns most of previous tests using this trail.index
@@ -258,25 +262,25 @@ describe('IntexText', function () {
 
   it('test changing trail path doesnt affect index', function () {
     var trail = new Trail(FIXTURE_ROOT);
-    trail.paths.append('.');
-    var index = trail.index;
-    assert.deepEqual([fixturePath('.')], trail.paths.toArray());
-    assert.deepEqual([fixturePath('.')], index.paths.toArray());
-    trail.paths.append('app/views');
-    assert.deepEqual([fixturePath('.'), fixturePath('app/views')], trail.paths.toArray());
-    assert.deepEqual([fixturePath('.')], index.paths.toArray());
+    trail.append_path('.');
+    var index = trail.cached();
+    assert.deepEqual([fixturePath('.')], trail.paths.slice());
+    assert.deepEqual([fixturePath('.')], index.paths.slice());
+    trail.append_paths('app/views');
+    assert.deepEqual([fixturePath('.'), fixturePath('app/views')], trail.paths.slice());
+    assert.deepEqual([fixturePath('.')], index.paths.slice());
   });
 
 
   it('test changing trail extensions doesnt affect index', function () {
     var trail = new Trail(FIXTURE_ROOT);
-    trail.extensions.append('builder');
-    var index = trail.index;
-    assert.deepEqual(['.builder'], trail.extensions.toArray());
-    assert.deepEqual(['.builder'], index.extensions.toArray());
-    trail.extensions.append('str');
-    assert.deepEqual(['.builder', '.str'], trail.extensions.toArray());
-    assert.deepEqual(['.builder'], index.extensions.toArray());
+    trail.append_extension('builder');
+    var index = trail.cached();
+    assert.deepEqual(['.builder'], trail.extensions.slice());
+    assert.deepEqual(['.builder'], index.extensions.slice());
+    trail.append_extension('str');
+    assert.deepEqual(['.builder', '.str'], trail.extensions.slice());
+    assert.deepEqual(['.builder'], index.extensions.slice());
   });
 
 
