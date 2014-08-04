@@ -50,8 +50,8 @@ describe('Trail', function () {
 
   it('test trail aliases', function () {
     assert.deepEqual({
-      'html': ['htm', 'xhtml', 'php'],
-      'js': ['coffee'],
+      '.html': ['.htm', '.xhtml', '.php'],
+      '.js': ['.coffee'],
     }, trail.reverse_aliases);
   });
 
