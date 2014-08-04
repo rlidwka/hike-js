@@ -48,6 +48,13 @@ describe('Trail', function () {
     assert.deepEqual(['.builder', '.coffee', '.str', '.erb'], trail.extensions.slice());
   });
 
+  it('test trail aliases', function () {
+    assert.deepEqual({
+      'html': ['htm', 'xhtml', 'php'],
+      'js': ['coffee'],
+    }, trail.reverse_aliases);
+  });
+
   it('test trail index', function () {
     // assert_kind_of Hike::Index, trail.index
     // what's the js equivalent?
@@ -82,6 +89,20 @@ describe('Trail', function () {
     trail.prepend_paths('vendor/plugins/signal_id/app/views');
     assert.equal(fixturePath('vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb'),
       trail.find('layouts/interstitial.html'));
+  });
+
+  it('test find all respects path order', function () {
+    assert.deepEqual([
+      fixture_path("app/views/layouts/interstitial.html.erb"),
+      fixture_path("vendor/plugins/signal_id/app/views/layouts/interstitial.html.erb"),
+    ], trail.find_all("layouts/interstitial.html"));
+  });
+
+  it('test find all with multiple extensions respects extension order', function () {
+    assert.deepEqual([
+      fixture_path("app/views/application.js.coffee.str"),
+      fixture_path("app/views/application.js.coffee.erb"),
+    ], trail.find_all("application.js"));
   });
 
   it('test find respects extension order', function () {
@@ -237,7 +258,7 @@ describe('Trail', function () {
 
 });
 
-describe('IntexText', function () {
+describe('Cache', function () {
   var trail;
   var asset;
 
@@ -260,7 +281,7 @@ describe('IntexText', function () {
       trail.find('projects/project.js'));
   });
 
-  it('test changing trail path doesnt affect index', function () {
+  it('test changing trail path doesnt affect cache', function () {
     var trail = new Trail(FIXTURE_ROOT);
     trail.append_path('.');
     var index = trail.cached();
@@ -272,7 +293,7 @@ describe('IntexText', function () {
   });
 
 
-  it('test changing trail extensions doesnt affect index', function () {
+  it('test changing trail extensions doesnt affect cache', function () {
     var trail = new Trail(FIXTURE_ROOT);
     trail.append_extension('builder');
     var index = trail.cached();
@@ -284,7 +305,7 @@ describe('IntexText', function () {
   });
 
 
-  it('test index find does not reflect changes in the file system', function () {
+  it('test cache find does not reflect changes in the file system', function () {
     // trail here is its index
     var tempfile = fixturePath('dashboard.html');
     assert(!fs.existsSync(tempfile));
